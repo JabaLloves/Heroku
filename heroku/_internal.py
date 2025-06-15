@@ -35,7 +35,7 @@ def get_startup_callback() -> callable:
 
 def die():
     """Platform-dependent way to kill the current process group"""
-    if "DOCKER" in os.environ or "VAMHOST" in os.environ:
+    if "DOCKER" in os.environ or "VAMHOST" in os.envrion:
         sys.exit(0)
     else:
         # This one is actually better, because it kills all subprocesses

@@ -17,7 +17,7 @@ import io
 import json
 import logging
 import os
-import re 
+import re
 import time
 import zipfile
 from pathlib import Path
@@ -72,7 +72,7 @@ class HerokuBackupMod(loader.Module):
             "📼 Your database backups will appear here",
             silent=True,
             archive=True,
-            avatar="https://raw.githubusercontent.com/coddrago/Heroku/dev-test/assets/heroku-backups.png",
+            avatar="https://i.postimg.cc/B63Yc4Rv/1000014525.jpg" if os.environ.get("VAMHOST") else "https://raw.githubusercontent.com/coddrago/Heroku/dev-test/assets/heroku-backups.png",
             _folder="heroku",
             invite_bot=True,
         )

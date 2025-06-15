@@ -59,7 +59,7 @@ class TokenObtainment(InlineUnit):
                 username = f"@heroku_{uid}_bot"
 
             for msg in [
-                f"🪐 Heroku userbot"[:64],
+                "🪐 Heroku userbot" + (" (VamHost)" if os.environ.get("VAMHOST") else "")[:64],
                 username,
                 "/setuserpic",
                 username,
@@ -79,8 +79,10 @@ class TokenObtainment(InlineUnit):
                 await fw_protect()
                 from .. import main
 
-                if "DOCKER" in os.environ():
+                if "DOCKER" in os.environ:
                     m = await conv.send_file("https://raw.githubusercontent.com/coddrago/Heroku/refs/heads/master/assets/heroku-ava.png")
+                elif os.environ.get("VAMHOST"):
+                    m = await conv.send_file("https://i.postimg.cc/3JZnk1vT/1000014501.jpg")
                 else:
                     m = await conv.send_file(main.BASE_PATH / "assets" / "heroku-ava.png")
                 r = await conv.get_response()

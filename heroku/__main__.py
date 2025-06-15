@@ -14,7 +14,6 @@
 
 import getpass
 import os
-import traceback
 import subprocess
 import sys
 import hashlib
@@ -87,7 +86,6 @@ else:
         except ImportError:
             print("\U0001F504 Installing dependencies...")
             deps()
-            print(traceback.format_exc())
             restart()
 
     try:
@@ -97,7 +95,6 @@ else:
     except ImportError as e:
         print(f"{str(e)}\n\U0001F504 Attempting dependencies installation... Just wait ⏱")
         deps()
-        print(traceback.format_exc())
         restart()
 
     if "HEROKU_DO_NOT_RESTART" in os.environ:

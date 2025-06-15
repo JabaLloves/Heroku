@@ -418,7 +418,7 @@ class TestMod(loader.Module):
             "🪐 Your Heroku logs will appear in this chat",
             silent=True,
             invite_bot=True,
-            avatar="https://raw.githubusercontent.com/coddrago/Heroku/dev-test/assets/heroku-logs.png",
+            avatar="https://i.postimg.cc/mZw6hpb1/heroku-logs.jpg" if os.environ.get("VAMHOST") else "https://raw.githubusercontent.com/coddrago/Heroku/dev-test/assets/heroku-logs.png",
         )
 
         self.logchat = int(f"-100{chat.id}")

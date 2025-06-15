@@ -79,6 +79,20 @@ class Web(root.Web):
         if all(option in os.environ for option in {"LAVHOST", "USER", "SERVER"}):
             return f"https://{os.environ['USER']}.{os.environ['SERVER']}.lavhost.ml"
 
+        if "VAMHOST" in os.environ:
+            try:
+                ip = subprocess.run(
+                    ["curl", "ifconfig.me"],
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                    check=True,
+                    text=True,
+                    timeout=10
+                ).stdout.strip()
+                url = f"http://{ip}:{self.port}"
+            except (subprocess.SubprocessError, TimeoutError):
+                pass
+
         if proxy_pass:
             with contextlib.suppress(Exception):
                 url = await self.proxypasser.get_url(timeout=10)
@@ -112,6 +126,7 @@ class Web(root.Web):
         await self.get_url(proxy_pass)
 
         self.running.set()
+        print(f"Heroku Userbot Web Interface running on {self.port}")
 
     async def stop(self):
         await self.runner.shutdown()
