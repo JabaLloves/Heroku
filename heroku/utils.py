@@ -987,7 +987,7 @@ def get_platform_emoji() -> str:
         return BASE.format(5352678227582152630)
 
     if main.IS_VAMHOST:
-        return BASE.format(5350569213956210746)
+        return BASE.format(5213196106627838141)
 
     return BASE.format(5393588431026674882)
 
