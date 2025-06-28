@@ -957,13 +957,20 @@ def get_platform_emoji() -> str:
 
     BASE = "".join(
         (
+            "<emoji document_id={}>👁</emoji>",
+            "<emoji document_id=5213281877124738977>👁</emoji>",
+            "<emoji document_id=5213047286011032091>👁</emoji>",
+            "<emoji document_id=5213261570519362358>👁</emoji>",
+        )
+    ) if "VAMHOST" in os.environ else "".join(
+        (
             "<emoji document_id={}>🪐</emoji>",
             "<emoji document_id=5352934134618549768>🪐</emoji>",
             "<emoji document_id=5352663371290271790>🪐</emoji>",
             "<emoji document_id=5350822883314655367>🪐</emoji>",
         )
     )
-
+    
     if main.IS_HIKKAHOST:
         return BASE.format(5395745114494624362)
     
