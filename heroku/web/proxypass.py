@@ -8,7 +8,6 @@ import os
 import logging
 import typing
 from .ssh_tunnel import SSHTunnel
-from .cloudflare_tunnel import CloudflareTunnel
 
 
 logger = logging.getLogger(__name__)
@@ -27,7 +26,6 @@ class ProxyPasser:
         self._verbose = verbose
         self._tunnels = [
             SSHTunnel(port=port, change_url_callback=self._on_url_change),
-            CloudflareTunnel(port=port, verbose=verbose, change_url_callback=self._on_url_change)
         ]
 
 
@@ -41,6 +39,7 @@ class ProxyPasser:
 
     async def get_url(self, timeout: float = 25) -> typing.Optional[str]:
         
+
         if "DOCKER" in os.environ or "VAMHOST" in os.environ or "NO_PROXY" in os.environ:
             # We're in a Docker container, so we can't use ssh
             # Also, the concept of Docker is to keep
