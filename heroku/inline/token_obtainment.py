@@ -79,13 +79,13 @@ class TokenObtainment(InlineUnit):
                 await fw_protect()
                 from .. import main
 
-                if "DOCKER" in os.environ:
-                    m = await conv.send_file("https://raw.githubusercontent.com/coddrago/Heroku/refs/heads/master/assets/heroku-ava.png")
-                elif os.environ.get("VAMHOST"):
+                if os.environ.get("VAMHOST"):
                     m = await conv.send_file("https://i.postimg.cc/3JZnk1vT/1000014501.jpg")
                 else:
-                    m = await conv.send_file(main.BASE_PATH / "assets" / "heroku-ava.png")
+                    m = await conv.send_file("https://raw.githubusercontent.com/coddrago/Heroku/refs/heads/master/assets/heroku-ava.png")
+
                 r = await conv.get_response()
+
 
                 logger.debug(">> <Photo>")
                 logger.debug("<< %s", r.raw_text)
@@ -232,9 +232,7 @@ class TokenObtainment(InlineUnit):
                         await fw_protect()
                         from .. import main
 
-                        m = await conv.send_file(
-                            main.BASE_PATH / "assets" / "heroku-ava.png"
-                        )
+                        m = await conv.send_file("https://raw.githubusercontent.com/coddrago/assets/refs/heads/main/heroku/heroku.png")
                         r = await conv.get_response()
 
                         logger.debug(">> <Photo>")

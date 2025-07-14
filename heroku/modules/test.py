@@ -65,7 +65,7 @@ class TestMod(loader.Module):
             ),
             loader.ConfigValue(
                 "tglog_level",
-                "INFO",
+                "ERROR",
                 (
                     "⚠️ Do not touch, if you don't know what it does!\n"
                     "Minimal loglevel for records to be sent in Telegram."
@@ -378,11 +378,9 @@ class TestMod(loader.Module):
         banner = self.config["banner_url"]
         
         if self.config["banner_url"]:
-            await message.delete()
-            await self.client.send_file(
-                message.peer_id,
-                banner,
-                caption = self.config["Text_Of_Ping"].format(
+            await utils.answer(
+                message,
+                self.config["Text_Of_Ping"].format(
                     ping=round((time.perf_counter_ns() - start) / 10**6, 3),
                     uptime=utils.formatted_uptime(),
                     ping_hint=(
@@ -393,6 +391,7 @@ class TestMod(loader.Module):
                     prefix=self.get_prefix(),
                     
         ),
+                file = banner,
                 reply_to=getattr(message, "reply_to_msg_id", None),
             )
 
@@ -418,7 +417,7 @@ class TestMod(loader.Module):
             "🪐 Your Heroku logs will appear in this chat",
             silent=True,
             invite_bot=True,
-            avatar="https://i.postimg.cc/mZw6hpb1/heroku-logs.jpg" if os.environ.get("VAMHOST") else "https://raw.githubusercontent.com/coddrago/Heroku/dev-test/assets/heroku-logs.png",
+            avatar="https://i.postimg.cc/mZw6hpb1/heroku-logs.jpg" if os.environ.get("VAMHOST") else "https://raw.githubusercontent.com/coddrago/assets/refs/heads/main/heroku/heroku_logs.png",
         )
 
         self.logchat = int(f"-100{chat.id}")

@@ -12,13 +12,11 @@
 
 import git
 import time
-import git
 import psutil
 import os
 import glob
 import requests
 import re
-import random
 import emoji
 
 from bs4 import BeautifulSoup
@@ -32,15 +30,6 @@ from .. import loader, utils, version
 import platform as lib_platform
 import getpass
 
-def censor_vamhost(text: str) -> str:
-    def replace_random_letter(match):
-        word = match.group(0)
-        if len(word) <= 1:
-            return word
-        i = random.randint(0, len(word) - 1)
-        return word[:i] + '#' + word[i+1:]
-    return re.sub(r'vamhost', replace_random_letter, text, flags=re.IGNORECASE)
-
 @loader.tds
 class HerokuInfoMod(loader.Module):
     """Show userbot info"""
@@ -53,13 +42,11 @@ class HerokuInfoMod(loader.Module):
                 "custom_message",
                 doc=lambda: self.strings("_cfg_cst_msg"),
             ),
-
             loader.ConfigValue(
                 "banner_url",
-                "https://imgur.com/a/7LBPJiq.png",
+                "https://raw.githubusercontent.com/coddrago/assets/refs/heads/main/heroku/heroku_info.png",
                 lambda: self.strings("_cfg_banner"),
             ),
-
             loader.ConfigValue(
                 "show_heroku",
                 True,
@@ -85,6 +72,12 @@ class HerokuInfoMod(loader.Module):
                     fixed_len=7,
                 ),
             ),
+            loader.ConfigValue(
+                "replace_chats",
+                [-1002341345589, -1001697279580],
+                "List of chat IDs where 'vamhost' (any case) should be replaced with 'mutehost'. For group chats, prepend '-100' to the chat ID (e.g., -100123456789 for chat ID 123456789).",
+                validator=loader.validators.Series(validator=loader.validators.Integer()),
+            ),
         )
 
     def _get_os_name(self):
@@ -95,7 +88,7 @@ class HerokuInfoMod(loader.Module):
                         return line.split("=")[1].strip().strip('"')
         except FileNotFoundError:
             return self.strings['non_detectable']
-
+        
     def remove_emoji_and_html(self, text: str) -> str:
         reg = r'<[^<]+?>'
         text = f"{re.sub(reg, '', text)}"
@@ -103,14 +96,14 @@ class HerokuInfoMod(loader.Module):
         emoji_list = [c for c in allchars if c in emoji.EMOJI_DATA]
         clean_text = ''.join([str for str in text if not any(i in str for i in emoji_list)])
         return clean_text
-
-    def imgurpidor(self, url: str) -> str:
+    
+    def imgurpidor(self, url: str) -> str: #я это оставлю)
         page = requests.get(url, stream=True, headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"})
         soup = BeautifulSoup(page.text, 'html.parser')
         metatag = soup.find("meta", property="og:image")
         return metatag['content']
 
-    def _render_info(self, start: float) -> str:
+    def _render_info(self, start: float, chat_id: int = None) -> str:
         try:
             repo = git.Repo(search_parent_directories=True)
             diff = repo.git.log([f"HEAD..origin/{version.branch}", "--oneline"])
@@ -137,7 +130,7 @@ class HerokuInfoMod(loader.Module):
             ("❓", "<emoji document_id=5407025283456835913>📱</emoji>"),
             ("🍀", "<emoji document_id=5395325195542078574>🍀</emoji>"),
             ("🦾", "<emoji document_id=5386766919154016047>🦾</emoji>"),
-            ("🚂", "<emoji document_id=5359595190807962128>🚂</emoji>"),
+            ("🚂", "<emoji document_id=5088392805653836400>🚂</emoji>"),
             ("🐳", "<emoji document_id=5431815452437257407>🐳</emoji>"),
             ("🕶", "<emoji document_id=5407025283456835913>📱</emoji>"),
             ("🐈‍⬛", "<emoji document_id=6334750507294262724>🐈‍⬛</emoji>"),
@@ -153,7 +146,8 @@ class HerokuInfoMod(loader.Module):
             ("🍏", "<emoji document_id=5372908412604525258>🍏</emoji>")
         ]:
             platform = platform.replace(emoji, icon)
-        return censor_vamhost(
+
+        info_text = (
             (
                 "🪐 Heroku\n"
                 if self.config["show_heroku"]
@@ -164,13 +158,13 @@ class HerokuInfoMod(loader.Module):
                 version=_version,
                 build=build,
                 prefix=prefix,
-                platform = censor_vamhost(utils.get_named_platform()),
+                platform=platform,
                 upd=upd,
                 uptime=utils.formatted_uptime(),
                 cpu_usage=utils.get_cpu_usage(),
                 ram_usage=f"{utils.get_ram_usage()} MB",
                 branch=version.branch,
-                hostname=censor_vamhost(lib_platform.node()),
+                hostname=lib_platform.node(),
                 user=getpass.getuser(),
                 os=self._get_os_name() or self.strings('non_detectable'),
                 kernel=lib_platform.release(),
@@ -207,22 +201,32 @@ class HerokuInfoMod(loader.Module):
             )
         )
 
-    def _get_info_photo(self, start: float) -> Optional[Path]:
+        if chat_id in self.config["replace_chats"]:
+            info_text = re.sub(
+                r'vamhost', 
+                lambda m: ('M' if m.group(0)[0].isupper() else 'm') + 'utehost',
+                info_text, 
+                flags=re.I
+            )
+
+        return info_text
+
+    def _get_info_photo(self, start: float, chat_id: int = None) -> Optional[Path]:
         imgform = self.config['banner_url'].split('.')[-1]
         imgset = self.config['imgSettings']
         if imgform in ['jpg', 'jpeg', 'png', 'bmp', 'webp']:
             response = requests.get(self.config['banner_url'] if not self.config['banner_url'].startswith('https://imgur') else self.imgurpidor(self.config['banner_url']), stream=True, headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"})
             img = Image.open(BytesIO(response.content))
             font = ImageFont.truetype(
-                glob.glob(f'{os.getcwd()}/assets/font.*')[0],
-                size=int(imgset[1]),
+                glob.glob(f'{os.getcwd()}/assets/font.*')[0], 
+                size=int(imgset[1]), 
                 encoding='unic'
             )
             w, h = img.size
             draw = ImageDraw.Draw(img)
             draw.text(
                 (int(w/2), int(h/2)) if imgset[3] == '0|0' else tuple([int(i) for i in imgset[3].split('|')]),
-                f'{utils.remove_html(self._render_info(start))}',
+                f'{utils.remove_html(self._render_info(start, chat_id))}', 
                 anchor=imgset[4],
                 font=font,
                 fill=imgset[2] if imgset[2].startswith('#') else '#000',
@@ -234,7 +238,7 @@ class HerokuInfoMod(loader.Module):
             img.save(path)
             return Path(path).absolute()
         return None
-
+    
     @loader.command()
     async def insfont(self, message: Message):
         "<Url|Reply to font> - Install font"
@@ -285,33 +289,34 @@ class HerokuInfoMod(loader.Module):
     @loader.command()
     async def infocmd(self, message: Message):
         start = time.perf_counter_ns()
+        chat_id = message.chat_id
         if self.config['switchInfo']:
-            if self._get_info_photo(start) is None:
+            if self._get_info_photo(start, chat_id) is None:
                 await utils.answer(
-                    message,
+                    message, 
                     self.strings["incorrect_img_format"]
                 )
                 return
-
+           
             await utils.answer_file(
                 message,
-                self._get_info_photo(start),
+                self._get_info_photo(start, chat_id),
                 reply_to=getattr(message, "reply_to_msg_id", None),
             )
         elif self.config["custom_message"] is None:
-            await utils.answer_file(
+            await utils.answer(
                 message,
-                self.config["banner_url"],
-                self._render_info(start),
+                self._render_info(start, chat_id),
+                file = self.config["banner_url"],
                 reply_to=getattr(message, "reply_to_msg_id", None),
             )
         else:
             if '{ping}' in self.config["custom_message"]:
                 message = await utils.answer(message, self.config["ping_emoji"])
-            await utils.answer_file(
+            await utils.answer(
                 message,
-                self.config["banner_url"],
-                self._render_info(start),
+                self._render_info(start, chat_id),
+                file = self.config["banner_url"],
                 reply_to=getattr(message, "reply_to_msg_id", None),
             )
 
