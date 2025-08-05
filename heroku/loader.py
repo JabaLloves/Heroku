@@ -275,7 +275,7 @@ en_keys = "`qwertyuiop[]asdfghjkl;'zxcvbnm,./~@#$%^&QWERTYUIOP{}ASDFGHJKL:\"|ZXC
 
 BASE_DIR = (
     "/data"
-    if "DOCKER" in os.environ or "VAMHOST" in os.environ
+    if "DOCKER" in os.environ or "VAMHOST" in os.environ or "JABAHOST" in os.environ
     else os.path.normpath(os.path.join(utils.get_base_dir(), ".."))
 )
 

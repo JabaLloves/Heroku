@@ -84,7 +84,7 @@ else:
 
 BASE_DIR = (
     "/data"
-    if "DOCKER" in os.environ or "VAMHOST" in os.environ
+    if "DOCKER" in os.environ or "VAMHOST" in os.environ or "JABAHOST" in os.environ
     else os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 )
 
@@ -99,6 +99,7 @@ IS_AEZA = "aeza" in socket.gethostname()
 IS_USERLAND = "userland" in os.environ.get("USER", "")
 IS_JAMHOST = "JAMHOST" in os.environ
 IS_VAMHOST = "VAMHOST" in os.environ
+IS_JABAHOST = "JABAHOST" in os.environ
 IS_WSL = False
 IS_WINDOWS = False
 with contextlib.suppress(Exception):

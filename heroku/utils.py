@@ -945,6 +945,9 @@ def get_named_platform() -> str:
     if main.IS_VAMHOST:
         return "👁️ VamHost"
 
+    if main.IS_JABAHOST:
+        return "😎 JabaHost"
+
     return f"✌️ lavHost {os.environ['LAVHOST']}" if main.IS_LAVHOST else "💎 VDS"
 
 
@@ -988,6 +991,9 @@ def get_platform_emoji() -> str:
 
     if main.IS_VAMHOST:
         return BASE.format(5213196106627838141)
+
+    if main.IS_JABAHOST:
+        return BASE.format(5231165700038471921)
 
     return BASE.format(5393588431026674882)
 
