@@ -203,7 +203,7 @@ class HerokuInfoMod(loader.Module):
 
         if chat_id in self.config["replace_chats"]:
             info_text = re.sub(
-                r'vamhost', 
+                r'(vamhost|jabahost)', 
                 lambda m: ('M' if m.group(0)[0].isupper() else 'm') + 'utehost',
                 info_text, 
                 flags=re.I
