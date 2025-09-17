@@ -903,10 +903,6 @@ def chunks(_list: ListLike, n: int, /) -> typing.List[typing.List[typing.Any]]:
 
 
 def get_named_platform() -> str:
-    """
-    Returns formatted platform name
-    :return: Platform name
-    """
     from . import main
 
     with contextlib.suppress(Exception):
@@ -946,10 +942,9 @@ def get_named_platform() -> str:
         return "👁️ VamHost"
 
     if main.IS_JABAHOST:
-        return "🐸 JabaHost"
+        return "<emoji document_id=5411083752673650595>🐸</emoji> JabaHost"
 
     return f"✌️ lavHost {os.environ['LAVHOST']}" if main.IS_LAVHOST else "💎 VDS"
-
 
 def get_platform_emoji() -> str:
     """
