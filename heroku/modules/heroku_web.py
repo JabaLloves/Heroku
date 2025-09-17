@@ -39,6 +39,10 @@ class HerokuWebMod(loader.Module):
 
     @loader.command()
     async def weburl(self, message: Message, force: bool = False):
+
+        if "SHARKHOST" in os.environ or "HIKKAHOST" in os.environ or "JAMHOST" in os.environ:
+            await utils.answer(message, self.strings["host_denied"]
+
         if "LAVHOST" in os.environ:
             form = await self.inline.form(
                 self.strings("lavhost_web"),
@@ -47,7 +51,7 @@ class HerokuWebMod(loader.Module):
                     "text": self.strings("web_btn"),
                     "url": await main.heroku.web.get_url(proxy_pass=False),
                 },
-                photo="https://raw.githubusercontent.com/coddrago/assets/refs/heads/main/heroku/web_interface.png",
+                photo="https://imgur.com/a/yOoHsa2.png",
             )
             return
 
@@ -68,7 +72,7 @@ class HerokuWebMod(loader.Module):
                         },
                         {"text": self.strings("btn_no"), "action": "close"},
                     ],
-                    photo="https://raw.githubusercontent.com/coddrago/assets/refs/heads/main/heroku/opening_tunnel.png",
+                    photo="https://raw.githubusercontent.com/coddrago/assets/refs/heads/main/heroku/web_interface.png",
                 ):
                     raise Exception
             except Exception:
